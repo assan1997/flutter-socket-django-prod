@@ -426,9 +426,11 @@ exports.globalQueries = class {
 
     static getUserAllChats(data) {
         return new Promise(async (next) => {
-            let user = UserM.findOne({ id: data }).then(r => r._id);
-            const allChat = await Chat.find({ initiator: use } || { peer: user }).populate('initiator').populate('peer')
-            next({ etat: true, data: allChat })
+            let user = await UserM.findOne({ id: data }).then(r => r._id);
+            await Chat.find({ initiator: use } || { peer: user }).populate('initiator').populate('peer').then(r => {
+                next({ etat: true, data: r })
+            })
+
         })
     }
 };
