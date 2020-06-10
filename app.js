@@ -2,6 +2,7 @@ const express = require('express')
 const axios = require('axios')
 const webSocket = require('ws')
 const http = require('http')
+const path = require('path')
 const db = require('./config/database');
 const path = require('path')
 const uniqid = require('uniqid');
@@ -10,6 +11,8 @@ const {
     globalQueries
 } = require('./controllers/globalQueries');
 const app = express();
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json());
 app.use(express.urlencoded({
@@ -20,7 +23,7 @@ app.use(cors());
 
 
 // la route for register user
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.render('index')
 })
 app.post('/addUser', (req, res) => {
