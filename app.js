@@ -59,7 +59,13 @@ wss.on('connection', (ws, request) => {
     ws.on('message', async message => {
         const data = JSON.parse(message.toString());
         console.log('message', data);
-        if (data.type === "connectUser") {
+        if (data.type === "getAllUserChat") {
+            const output = await globalQueries.getUserAllChats(data.user_id)
+            ws.send('cool')
+            // ws.send(JSON.stringify({ type: data.type, data: output.data }))
+
+        }
+        else if (data.type === "connectUser") {
             const dt = await globalQueries.findUser(data.email);
             if (dt.etat && dt.data !== null) {
                 console.log('data', dt);
@@ -68,13 +74,7 @@ wss.on('connection', (ws, request) => {
                 ws.send(JSON.stringify({ type: "connectionError" }));
             }
         }
-        else if (data.type === "getAllUserChat") {
-            console.log(data)
-            const output = await globalQueries.getUserAllChats(data.user_id)
-            ws.send('cool')
-            // ws.send(JSON.stringify({ type: data.type, data: output.data }))
 
-        }
         else if (data.type === "noConnection") {
             console.log('no connection')
         } else if (data.type === "newConnection") {
