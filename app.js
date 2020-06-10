@@ -24,7 +24,6 @@ app.post('/addUser', (req, res) => {
     const data = req.body;
     console.log('data', data);
     globalQueries.addUser(data).then((output) => {
-
         if (output.etat) {
             res.json(output);
         }

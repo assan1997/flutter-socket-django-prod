@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const connection = async () => {
-    var uri = process.env.MONGOGB_URI
+    var uri = process.env.MONGODB_URI
     try {
         await mongoose.connect(uri, {
             useNewUrlParser: true,
