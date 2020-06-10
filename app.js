@@ -47,7 +47,7 @@ db();
 const httpServer = http.createServer(app);
 
 //socket io implementation
-const wss = new webSocket.Server({ httpServer })
+const wss = new webSocket.Server({ server: httpServer })
 
 wss.on('connection', (ws, request) => {
     //console.log(request);
