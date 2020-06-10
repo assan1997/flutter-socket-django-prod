@@ -22,8 +22,12 @@ const userSchema = new Schema({
         required: true
     },
     pays: {
-        type:String,
+        type: String,
         required: true
+    },
+    numero: {
+        type: String,
+        require: true
     },
     ws_id: String
 });

@@ -63,7 +63,7 @@ wss.on('connection', (ws, request) => {
             const dt = await globalQueries.findUser(data.email);
             if (dt.etat && dt.data !== null) {
                 console.log('data', dt);
-                ws.send(JSON.stringify({ type: "connectionSuccess" }));
+                ws.send(JSON.stringify({ type: "connectionSuccess", data: dt.data }));
             } else {
                 ws.send(JSON.stringify({ type: "connectionError" }));
             }
@@ -106,11 +106,15 @@ wss.on('connection', (ws, request) => {
                     }
                 })
             })
+        } else if (data.type === "getAllUserChat") {
+            const output = await globalQueries.getUserAllChats(data.user_id)
+            if (output.etat) {
+                ws.send(JSON.stringify({ type: data.type, data: output.data }))
+            }
         }
     });
     ws.on('error', (error) => console.log(error.message));
 });
-
 // running server
 httpServer.listen(process.env.PORT || 4000, () => {
     console.log('listenning on port 4000');

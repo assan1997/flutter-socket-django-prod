@@ -1,17 +1,17 @@
-const {Schema}  = require('mongoose');
-const mongoose  = require('mongoose');
+const { Schema } = require('mongoose');
+const mongoose = require('mongoose');
 const ChatSchema = new Schema({
-   emitter: {
-       type:Schema.Types.ObjectId,
-       ref: 'userMongo'
-   },
-    receiver: {
-       type: Schema.Types.ObjectId,
-        ref:'userMongo'
+    initiator: {
+        type: Schema.Types.ObjectId,
+        ref: 'userMongo'
+    },
+    peer: {
+        type: Schema.Types.ObjectId,
+        ref: 'userMongo'
     },
     messages: [
         {
-            user_id: {type: Schema.Types.ObjectId,ref:'user'},
+            user_id: { type: Schema.Types.ObjectId, ref: 'user' },
             msg_id: String,
             content: Text,
             createdAt: {
@@ -20,6 +20,6 @@ const ChatSchema = new Schema({
             }
         }
     ]
-});
+}); 
 
-export default mongoose.model('chat',ChatSchema);
+export default mongoose.model('chat', ChatSchema);

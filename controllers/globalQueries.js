@@ -2,6 +2,7 @@ const UserM = require('../models/userMongo.model');
 const Groupe = require('../models/groupes.model');
 const groupesModel = require('../models/groupes.model');
 
+const Chat = require('../models/chat.model')
 exports.globalQueries = class {
 
     static addUser(data) {
@@ -9,24 +10,24 @@ exports.globalQueries = class {
             const user = new UserM({
                 id: data.id,
                 nom: data.nom,
-                prenoms:data.prenoms,
-                email:data.email,
-                pays:data.pays
+                prenoms: data.prenoms,
+                email: data.email,
+                pays: data.pays
             });
             user.save().then(r => {
-               next({etat:true, data:r});
+                next({ etat: true, data: r });
             }).catch(err => {
-                next({etat:false, message:err});
+                next({ etat: false, message: err });
             })
         });
     }
 
     static findUser(email) {
         return new Promise(async next => {
-            UserM.findOne({email:email}).then(r => {
-               next({etat:true, data:r});
+            UserM.findOne({ email: email }).then(r => {
+                next({ etat: true, data: r });
             }).catch(err => {
-                next({etat:false, message:err});
+                next({ etat: false, message: err });
             })
         });
     }
@@ -35,47 +36,47 @@ exports.globalQueries = class {
 
     // ce qui est mis en commentaire n'est plus utile
 
- /*   static setUser(data) {
-        return new Promise(async next => {
-            const all = await User.find({}).then(r => r);
-            let id = all.length == 0 ? 1 : all[all.length - 1].id + 1;
-            const user = await new User({
-                id: id,
-                nom: data.nom,
-                password: data.password
-            });
-            user.save().then(r => {
-                next({
-                    etat: true
-                });
-            }).catch(err => {
-                next({
-                    etat: false,
-                    err: err
-                });
-            })
-        })
-    } */
+    /*   static setUser(data) {
+           return new Promise(async next => {
+               const all = await User.find({}).then(r => r);
+               let id = all.length == 0 ? 1 : all[all.length - 1].id + 1;
+               const user = await new User({
+                   id: id,
+                   nom: data.nom,
+                   password: data.password
+               });
+               user.save().then(r => {
+                   next({
+                       etat: true
+                   });
+               }).catch(err => {
+                   next({
+                       etat: false,
+                       err: err
+                   });
+               })
+           })
+       } */
 
 
-  /*  static getUser(data) {
-        return new Promise(async next => {
-            await User.findOne({
-                nom: data.nom,
-                password: data.password
-            }).then(s => {
-                next({
-                    etat: true,
-                    data: s
-                });
-            }).catch(err => {
-                next({
-                    etat: false,
-                    err: err
-                });
-            })
-        })
-    } */
+    /*  static getUser(data) {
+          return new Promise(async next => {
+              await User.findOne({
+                  nom: data.nom,
+                  password: data.password
+              }).then(s => {
+                  next({
+                      etat: true,
+                      data: s
+                  });
+              }).catch(err => {
+                  next({
+                      etat: false,
+                      err: err
+                  });
+              })
+          })
+      } */
 
     static newConnection(data) {
         console.log('data', data);
@@ -111,7 +112,7 @@ exports.globalQueries = class {
                                     tableau: ["vous êtes lié à aucun groupe"]
                                 });
                             } else {
-                               next({
+                                next({
                                     type: data.type,
                                     status: true,
                                     tableau: Content
@@ -421,9 +422,16 @@ exports.globalQueries = class {
             })
         })
     }
+
+
+    static getUserAllChats(data) {
+        return new Promise(async (next) => {
+            let user = UserM.findOne({ id: data }).then(r => r._id);
+            const allChat = await Chat.find({ initiator: use } || { peer: user }).populate('initiator').populate('peer')
+            next({ etat: true, data: allChat })
+        })
+    }
 };
-
-
 function verif(tab, id) {
     let verif = false;
     tab.forEach(user => {
