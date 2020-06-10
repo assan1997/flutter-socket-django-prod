@@ -61,7 +61,7 @@ wss.on('connection', (ws, request) => {
         const data = JSON.parse(message.toString());
         console.log('message', data);
         if (data.type === "getAllUserChat") {
-            const output = await globalQueries.getUserAllChats(data.user_id)
+            //const output = await globalQueries.getUserAllChats(data.user_id)
             ws.send('cool')
             // ws.send(JSON.stringify({ type: data.type, data: output.data }))
 
