@@ -13,7 +13,7 @@ const ChatSchema = new Schema({
         {
             user_id: { type: Schema.Types.ObjectId, ref: 'user' },
             msg_id: String,
-            content: Text,
+            content: String,
             createdAt: {
                 type: Date,
                 default: new Date()
