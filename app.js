@@ -20,7 +20,7 @@ app.use(cors());
 
 
 // la route for register user
-app.get('/', () => {
+app.get('/', (req,res) => {
     res.render('index')
 })
 app.post('/addUser', (req, res) => {
