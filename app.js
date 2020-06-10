@@ -109,6 +109,6 @@ wss.on('connection', (ws, request) => {
 });
 
 // running server
-httpServer.listen(4000, () => {
+httpServer.listen(process.env.PORT || 4000, () => {
     console.log('listenning on port 4000');
 });
