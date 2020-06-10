@@ -47,9 +47,7 @@ db();
 const httpServer = http.createServer(app);
 
 //socket io implementation
-const wss = new webSocket.Server({
-    port: 8090
-})
+const wss = new webSocket.Server({ app })
 
 wss.on('connection', (ws, request) => {
     //console.log(request);
