@@ -20,13 +20,16 @@ app.use(cors());
 
 
 // la route for register user
-app.post('/addUser',async(req,res)=>{
+app.post('/addUser', (req, res) => {
     const data = req.body;
-    console.log('data',data);
-    const output = await globalQueries.addUser(data)
-    if(output.etat){
-        res.json(output);
-    }
+    console.log('data', data);
+    globalQueries.addUser(data).then((output) => {
+
+        if (output.etat) {
+            res.json(output);
+        }
+    })
+
 });
 //axios tester
 //const result = axios.get('http://192.168.50.78:8000/create').then(r => r);
@@ -54,13 +57,13 @@ wss.on('connection', (ws, request) => {
     ws.on('message', async message => {
         const data = JSON.parse(message.toString());
         console.log('message', data);
-        if(data.type === "connectUser"){
+        if (data.type === "connectUser") {
             const dt = await globalQueries.findUser(data.email);
-            if(dt.etat && dt.data !== null){
-                console.log('data',dt);
-                ws.send(JSON.stringify({type:"connectionSuccess"}));
-            }else{
-                ws.send(JSON.stringify({type:"connectionError"}));
+            if (dt.etat && dt.data !== null) {
+                console.log('data', dt);
+                ws.send(JSON.stringify({ type: "connectionSuccess" }));
+            } else {
+                ws.send(JSON.stringify({ type: "connectionError" }));
             }
         }
         else if (data.type === "noConnection") {

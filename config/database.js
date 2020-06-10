@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const connection = async () => {
+    var uri = process.env.MONGOGB_URI
     try {
-        await mongoose.connect('mongodb://192.168.1.139:27017/nanNewChat', {
+        await mongoose.connect(uri, {
             useNewUrlParser: true,
             useFindAndModify: false,
             useUnifiedTopology: true
