@@ -20,6 +20,9 @@ app.use(cors());
 
 
 // la route for register user
+app.get('/', () => {
+    res.render('index')
+})
 app.post('/addUser', (req, res) => {
     const data = req.body;
     console.log('data', data);
