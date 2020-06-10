@@ -50,6 +50,7 @@ const httpServer = http.createServer(app);
 const wss = new webSocket.Server({ server: httpServer })
 
 wss.on('connection', (ws, request) => {
+    ws.send('hello')
     //console.log(request);
     ws.id = uniqid('ws_id-');
     console.log(ws.id);
