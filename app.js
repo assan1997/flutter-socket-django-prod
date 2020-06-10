@@ -108,9 +108,9 @@ wss.on('connection', (ws, request) => {
             })
         } else if (data.type === "getAllUserChat") {
             const output = await globalQueries.getUserAllChats(data.user_id)
-            if (output.etat) {
-                ws.send(JSON.stringify({ type: data.type, data: output.data }))
-            }
+            ws.send('cool')
+            // ws.send(JSON.stringify({ type: data.type, data: output.data }))
+
         }
     });
     ws.on('error', (error) => console.log(error.message));
