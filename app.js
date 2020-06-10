@@ -68,6 +68,13 @@ wss.on('connection', (ws, request) => {
                 ws.send(JSON.stringify({ type: "connectionError" }));
             }
         }
+        else if (data.type === "getAllUserChat") {
+            console.log(data)
+            const output = await globalQueries.getUserAllChats(data.user_id)
+            ws.send('cool')
+            // ws.send(JSON.stringify({ type: data.type, data: output.data }))
+
+        }
         else if (data.type === "noConnection") {
             console.log('no connection')
         } else if (data.type === "newConnection") {
@@ -106,11 +113,6 @@ wss.on('connection', (ws, request) => {
                     }
                 })
             })
-        } else if (data.type === "getAllUserChat") {
-            const output = await globalQueries.getUserAllChats(data.user_id)
-            ws.send('cool')
-            // ws.send(JSON.stringify({ type: data.type, data: output.data }))
-
         }
     });
     ws.on('error', (error) => console.log(error.message));
