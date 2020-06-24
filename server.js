@@ -27,6 +27,8 @@ const io = require("socket.io")(server, {
 const port = process.env.PORT || 4001;
 const route = require("./routes/index");
 app.use(cors(corsOptions));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 app.use("/ressources", express.static(__dirname + "/ImageProfil"));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -212,7 +214,8 @@ function roomCleaner(room) {
 }
 server.listen(port, (err) => {
   console.log("started");
-  mongoose.connect("mongodb://localhost/webrtc", {
+  var uri = process.env.MONGODB_URI;
+  mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
