@@ -22,9 +22,7 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 const server = http.createServer(/* options, */ app);
-const io = require("socket.io")(server, {
-  transports: ["websocket", "polling"],
-});
+const io = require("socket.io")(server);
 const port = process.env.PORT || 4001;
 const route = require("./routes/index");
 app.use(cors(corsOptions));
