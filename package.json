@@ -22,7 +22,7 @@
     "nodemon": "^1.19.4"
   },
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "watch": "npx watchify ./public/main.js -o"
   },
   "repository": {
