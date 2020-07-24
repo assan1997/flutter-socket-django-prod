@@ -12,7 +12,7 @@ router.route("/").get((req, res) => {
 router.route("/addUser").post(async(req, res) => {
   console.log('body',req.body);
   req.body.uid = parseInt(req.body.uid);
-  req.body.id_ent = parseINt(req.body.id_ent);
+  req.body.id_ent = parseInt(req.body.id_ent);
   const s = await globalQueries.addUser(req.body);
   console.log('s',s);
   if(s.status){
