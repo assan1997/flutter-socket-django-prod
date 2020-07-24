@@ -9,13 +9,13 @@ const jwtConfig = {
 router.route("/").get((req, res) => {
   res.send("api ok ");
 });
-router.route("/addUser").post(async(req, res) => {
-  console.log('body',req.body);
+router.route("/addUser").post(async (req, res) => {
+  console.log("body", req.body);
   req.body.uid = parseInt(req.body.uid);
   req.body.id_ent = parseInt(req.body.id_ent);
   const s = await globalQueries.addUser(req.body);
-  console.log('s',s);
-  if(s.status){
+  console.log("s", s);
+  if (s.status) {
     res.json(s.data);
   }
 });
@@ -36,11 +36,10 @@ router.route("/chatContacts/:id").get(async (req, res) => {
     res.json(all.data);
   }
 }); */
-router.route('/getAllData').get(async(req,res)=>{
+router.route("/getAllData").get(async (req, res) => {
   const allData = await globalQueries.getAllData();
-  console.log('ouput',data);
-  if(allData.status){
-    res.json({status:true,data:allData.data});
+  if (allData.status) {
+    res.json({ status: true, data: allData.data });
   }
 });
 router.route("/setFavorite/:id").post(async (req, res) => {
