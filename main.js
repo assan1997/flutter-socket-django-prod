@@ -1,5 +1,5 @@
 const express = require("express");
-const http = require("http");
+const https = require("https");
 const fs = require("fs");
 const cors = require("cors");
 const apiRoute = require("./api/index");
@@ -13,7 +13,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api", apiRoute);
 
-const httpServer = http.createServer(app);
+const httpServer = https.createServer(
+  {
+    key: fs.readFileSync("./key.pem"),
+    cert: fs.readFileSync("./cert.pem"),
+    passphrase: "nanjs",
+  },
+  app
+);
 
 // connexion à la base de données
 db();
