@@ -6,16 +6,19 @@ const jwtConfig = {
   secret: "dd5f3089-40c3-403d-af14-d0c228b05cb4",
   expireTime: 8000,
 };
+router.route("/").get((req, res) => {
+  res.json({ message: "ok" });
+});
 router.route("/chats/:id").get(async (req, res) => {
-    console.log('oui je reçois laroute',req.params.id);
+  console.log("oui je reçois laroute", req.params.id);
   let chats = await globalQueries.getAll({ user_id: parseInt(req.params.id) });
-  console.log('getAlls',chats);
+  console.log("getAlls", chats);
   if (chats.status) {
     res.json(chats.data);
   }
 });
 router.route("/chatContacts/:id").get(async (req, res) => {
-    console.log('oui je rentre ici');
+  console.log("oui je rentre ici");
   let all = await globalQueries.getChatContacts({
     user_id: parseInt(req.params.id),
   });
