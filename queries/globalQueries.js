@@ -4,6 +4,18 @@ const Messages = require("../models/messages.model");
 const User = require("../models/users.model");
 
 exports.globalQueries = class {
+  static addUser(data){
+    return new Promise(async next => {
+      const user = await new User({
+        ...data
+      });
+      user.save().then(r => {
+        next({status:true,data:r});
+      }).catch(err => {
+        next({status:false,err:err});
+      })
+    })
+  }
   static getAll(data) {
     return new Promise(async (next) => {
       const contacts = await User.find();
