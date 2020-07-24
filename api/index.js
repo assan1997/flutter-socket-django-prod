@@ -7,7 +7,7 @@ const jwtConfig = {
   expireTime: 8000,
 };
 router.route("/").get((req, res) => {
-  res.json({ message: "ok" });
+  res.send("api ok ");
 });
 router.route("/chats/:id").get(async (req, res) => {
   console.log("oui je reçois laroute", req.params.id);
