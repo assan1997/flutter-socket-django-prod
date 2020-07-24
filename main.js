@@ -74,6 +74,6 @@ wss.on("connection", (ws, request) => {
   });
 });
 
-httpServer.listen(5000, () => {
+httpServer.listen(process.env.PORT || 5000, () => {
   console.log("listenning on port 5000");
 });
