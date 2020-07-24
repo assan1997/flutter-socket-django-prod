@@ -1,5 +1,5 @@
 const express = require("express");
-const https = require("https");
+const http = require("http");
 const fs = require("fs");
 const cors = require("cors");
 const apiRoute = require("./api/index");
@@ -13,12 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api", apiRoute);
 
-const httpServer = https.createServer(
-  {
-    key: fs.readFileSync("./key.pem"),
-    cert: fs.readFileSync("./cert.pem"),
-    passphrase: "nanjs",
-  },
+const httpServer = http.createServer(
+  // {
+  //   key: fs.readFileSync("./key.pem"),
+  //   cert: fs.readFileSync("./cert.pem"),
+  //   passphrase: "nanjs",
+  // },
   app
 );
 
