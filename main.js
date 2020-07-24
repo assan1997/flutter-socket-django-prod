@@ -13,14 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api", apiRoute);
 
-const httpServer = http.createServer(
-  // {
-  //   key: fs.readFileSync("./key.pem"),
-  //   cert: fs.readFileSync("./cert.pem"),
-  //   passphrase: "nanjs",
-  // },
-  app
-);
+const httpServer = http.createServer(app);
 
 // connexion à la base de données
 db();
@@ -42,30 +35,28 @@ wss.on("connection", (ws, request) => {
         );
         break;
       case "send_message":
-        let manageMsg = await globalQueries.sendMessage(message);
-        if (manageMsg.status) {
-          wss.clients.forEach((client) => {
-            console.log("id", client.id);
-            if (
-              client.id !== ws.id &&
-              (client.id === manageMsg.data.peer ||
-                client.id === manageMsg.data.initiator)
-            ) {
-              client.send(
-                JSON.stringify({
-                  type: message.type,
-                  data: {
-                    msg: message.message,
-                    id: ws.id,
-                    text: message.message.textContent,
-                    isPinned: false,
-                    userId: client.id,
-                  },
-                })
-              );
-            }
-          });
-        }
+        message.message.senderId = message.userId;
+        wss.clients.forEach((client) => {
+          console.log("id", client.id);
+          if (
+            client.id !== ws.id &&
+            (client.id === message.userId || client.id === message.contactId)
+          ) {
+            client.send(
+              JSON.stringify({
+                type: message.type,
+                data: {
+                  msg: message.message,
+                  id: ws.id,
+                  text: message.message.textContent,
+                  isPinned: false,
+                  userId: client.id,
+                },
+              })
+            );
+          }
+        });
+        await globalQueries.sendMessage(message);
         break;
       default:
         console.log("nothing");
@@ -74,6 +65,6 @@ wss.on("connection", (ws, request) => {
   });
 });
 
-httpServer.listen(process.env.PORT || 5000, () => {
+httpServer.listen(5000, () => {
   console.log("listenning on port 5000");
 });

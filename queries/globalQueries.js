@@ -4,54 +4,44 @@ const Messages = require("../models/messages.model");
 const User = require("../models/users.model");
 
 exports.globalQueries = class {
-  static addUser(data){
-    return new Promise(async next => {
-      const user = await new User({
-        ...data
-      });
-      user.save().then(r => {
-        next({status:true,data:r});
-      }).catch(err => {
-        next({status:false,err:err});
-      })
-    })
-  }
-  static getAll(data) {
+  static addUser(data) {
     return new Promise(async (next) => {
-      const contacts = await User.find();
-      console.log(contacts);
-      const user = await User.findOne({ uid: data.user_id })
-        .populate("chatContacts")
-        .populate("favorites")
-        .then((r) => r);
-      await Chat.find({ $or: [{ peer: user._id }, { initiator: user._id }] })
+      const user = await new User({
+        ...data,
+      });
+      user
+        .save()
+        .then((r) => {
+          next({ status: true, data: r });
+        })
+        .catch((err) => {
+          next({ status: false, err: err });
+        });
+    });
+  }
+  static getAllData() {
+    return new Promise(async (next) => {
+      const contacts = await User.find().populate("favorites");
+      await Chat.find()
         .populate("peer")
         .populate("initiator")
         .populate("msg")
         .then((r) => {
           if (r !== null && r.length > 0) {
-            const output = {};
+            const output = [];
             r.forEach((el, index) => {
-              const id =
-                el.initiator.uid === data.user_id
-                  ? el.peer.uid
-                  : el.initiator.uid;
-              output[id] = {};
-              output[id].isPinned = el.isPinned;
-              output[id].msg =[];
-              el.msg.forEach((ms,index) => {
-                if(ms.senderId === data.user_id){
-                    ms.isSent=true;
-                }
-                output[id].msg.push(ms);
+              output.push({
+                initiator: el.initiator.uid,
+                peer: el.peer.uid,
+                isPinned: el.isPinned,
+                msg: el.msg,
               });
               if (index === r.length - 1) {
                 next({
                   status: true,
                   data: {
                     chats: output,
-                    favorites: user.favorites,
-                    contacts: contacts.filter((el) => el.uid !== user.uid),
+                    contacts: contacts,
                   },
                 });
               }
@@ -59,16 +49,15 @@ exports.globalQueries = class {
           } else {
             next({
               status: true,
-              data:{
-                  chats:[],
-                  favorites:user.favorites,
-                  contacts: contacts.filter((el) => el.uid !== user.uid)
-              }
-            
+              data: {
+                chats: [],
+                contacts: contacts,
+              },
             });
           }
-        }).catch(err => {
-            next({status:false,messager:err});
+        })
+        .catch((err) => {
+          next({ status: false, messager: err });
         });
     });
   }
@@ -117,76 +106,50 @@ exports.globalQueries = class {
       }
     });
   }
-  static getChatContacts(data) {
-    return new Promise(async (next) => {
-      const user = await User.findOne({ uid: data.user_id }).then((r) => r);
-      await Chat.find({ $or: [{ peer: user._id }, { initiator: user._id }] })
-        .populate("peer")
-        .populate("initiator")
-        .then((r) => {
-          if (r !== null) {
-            const output = [];
-            r.forEach((el, index) => {
-              const id =
-                el.initiator.uid === data.user_id ? el.peer : el.initiator;
-              output.push(id);
-              if (index === r.length - 1) {
-                next({
-                  status: true,
-                  data: output,
-                });
-              }
-            });
-          } else {
-            next({
-              status: false,
-              message:
-                "nous n'avez aucune conversation avec un membre de l'entreprise",
-            });
-          }
-        });
-    });
-  }
-  // messages
+
   static sendMessage(data) {
-    console.log('sendMessage',data);
     return new Promise(async (next) => {
       const initiator = await User.findOne({ uid: data.userId }).then((r) => r);
       const peer = await User.findOne({ uid: data.contactId }).then((r) => r);
-      const newMesg = await new Messages({
+      const newMessage = await new Messages({
         textContent: data.message.textContent,
         isSent: data.message.isSent,
-        isSeen: data.message.isSeen,
-        senderId:data.userId,
+        isPinned: data.message.isPinned,
+        senderId: data.userId,
         time: data.message.time,
       });
-      newMesg.save().then(async (mess) => {
+      newMessage.save().then(async (mes) => {
         const chat = await Chat.findOne({
           $or: [
-            { peer: peer._id, initiator: initiator._id },
-            { peer: initiator._id, initiator: peer._id },
+            { initiator: initiator._id, peer: peer._id },
+            { initiator: peer._id, peer: initiator._id },
           ],
-        });
+        }).then((s) => s);
         if (chat !== null) {
-          chat.msg.push(mess._id);
-          chat.save().then((r) => {
-            next({
-              status: true,
-              data: { peer: peer.uid, initiator: initiator.uid },
-            });
-          });
+          chat.msg.push(mes._id);
+          chat
+            .save()
+            .then((s) =>
+              next({
+                status: true,
+                data: { initiator: initiator.uid, peer: peer.uid },
+              })
+            );
         } else {
-          const chat = new Chat({
-            peer: peer._id,
+          const chat = await new Chat({
             initiator: initiator._id,
-            msg: [mess._id],
+            peer: peer._id,
+            isPinned: false,
+            msg: [mes._id],
           });
-          chat.save().then((r) => {
-            next({
-              status: true,
-              data: { peer: peer.uid, initiator: initiator.uid },
-            });
-          });
+          chat
+            .save()
+            .then((s) =>
+              next({
+                status: true,
+                data: { initiator: initiator.uid, peer: peer.uid },
+              })
+            );
         }
       });
     });

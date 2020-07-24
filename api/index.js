@@ -19,14 +19,14 @@ router.route("/addUser").post(async(req, res) => {
     res.json(s.data);
   }
 });
-router.route("/chats/:id").get(async (req, res) => {
+/* router.route("/chats/:id").get(async (req, res) => {
   console.log("oui je reçois laroute", req.params.id);
   let chats = await globalQueries.getAll({ user_id: parseInt(req.params.id) });
   console.log("getAlls", chats);
   if (chats.status) {
     res.json(chats.data);
   }
-});
+}); 
 router.route("/chatContacts/:id").get(async (req, res) => {
   console.log("oui je rentre ici");
   let all = await globalQueries.getChatContacts({
@@ -34,6 +34,13 @@ router.route("/chatContacts/:id").get(async (req, res) => {
   });
   if (all.status) {
     res.json(all.data);
+  }
+}); */
+router.route('/getAllData').get(async(req,res)=>{
+  const allData = await globalQueries.getAllData();
+  console.log('ouput',data);
+  if(allData.status){
+    res.json({status:true,data:allData.data});
   }
 });
 router.route("/setFavorite/:id").post(async (req, res) => {
