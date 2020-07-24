@@ -9,7 +9,7 @@ const jwtConfig = {
 router.route("/").get((req, res) => {
   res.send("api ok ");
 });
-router.route("/addUser").post((req, res) => {
+router.route("/addUser").post(async(req, res) => {
   console.log('body',req.body);
   req.body.uid = parseInt(req.body.uid);
   req.body.id_ent = parseINt(req.body.id_ent);
