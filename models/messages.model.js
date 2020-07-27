@@ -7,5 +7,4 @@ const ChatSchema = new mongoose.Schema({
   senderId: Number,
   time: String,
 });
-
 module.exports = mongoose.model("messages", ChatSchema);

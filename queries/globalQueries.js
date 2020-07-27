@@ -2,7 +2,8 @@ const Chat = require("../models/chats.model");
 const Ent = require("../models/entreprise.model");
 const Messages = require("../models/messages.model");
 const User = require("../models/users.model");
-
+const Groups = require("../models/groups.model");
+const { find } = require("../models/chats.model");
 exports.globalQueries = class {
   static addUser(data) {
     return new Promise(async (next) => {
@@ -24,6 +25,9 @@ exports.globalQueries = class {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
       console.log(user);
       const contacts = await User.find().populate("favorites");
+      const groups = await Groups.find({ users: { $in: user } })
+        .populate("msg")
+        .populate("user");
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
@@ -46,6 +50,7 @@ exports.globalQueries = class {
                   data: {
                     chats: output,
                     contacts: contacts,
+                    groups: groups,
                   },
                 });
               }
@@ -56,6 +61,7 @@ exports.globalQueries = class {
               data: {
                 chats: [],
                 contacts: contacts,
+                groups: groups,
               },
             });
           }
