@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const GroupsSchema = new mongoose.Schema({
+  gid: {type: Number},
   id_ent: { type: Number },
   name: { type: String },
   avatar: { type: String },

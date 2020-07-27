@@ -24,6 +24,7 @@ exports.globalQueries = class {
   static addGroup(data) {
     return new Promise(async (next) => {
       const group = await new Groups({
+        gid:data.gid,
         id_ent:data.id_ent,
         name: data.name,
         avatar: data.avatar,
