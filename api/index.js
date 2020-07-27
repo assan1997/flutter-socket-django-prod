@@ -21,7 +21,8 @@ router.route("/addUser").post(async (req, res) => {
 });
 
 router.route("/addGroup").post(async (req, res) => {
-  req.body.users = req.body.users.split(' ').splice(req.body.users.split(' ').length-1,1);
+  req.body.users = req.body.users.split(' ');
+  req.body.users.splice(req.body.users.length-1,1)
   req.body.id_ent = parseInt(req.body.id_ent);
   console.log("body addGroup", req.body);
   const s = await globalQueries.addGroup(req.body);
