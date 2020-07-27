@@ -19,10 +19,11 @@ exports.globalQueries = class {
         });
     });
   }
-  static getAllData() {
+  static getAllData(id) {
     return new Promise(async (next) => {
+      const user = await User.findOne({ uid: data }).then((r) => r._id);
       const contacts = await User.find().populate("favorites");
-      await Chat.find()
+      await Chat.findOne({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
         .populate("msg")
@@ -127,14 +128,12 @@ exports.globalQueries = class {
         }).then((s) => s);
         if (chat !== null) {
           chat.msg.push(mes._id);
-          chat
-            .save()
-            .then((s) =>
-              next({
-                status: true,
-                data: { initiator: initiator.uid, peer: peer.uid },
-              })
-            );
+          chat.save().then((s) =>
+            next({
+              status: true,
+              data: { initiator: initiator.uid, peer: peer.uid },
+            })
+          );
         } else {
           const chat = await new Chat({
             initiator: initiator._id,
@@ -142,14 +141,12 @@ exports.globalQueries = class {
             isPinned: false,
             msg: [mes._id],
           });
-          chat
-            .save()
-            .then((s) =>
-              next({
-                status: true,
-                data: { initiator: initiator.uid, peer: peer.uid },
-              })
-            );
+          chat.save().then((s) =>
+            next({
+              status: true,
+              data: { initiator: initiator.uid, peer: peer.uid },
+            })
+          );
         }
       });
     });

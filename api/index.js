@@ -36,8 +36,8 @@ router.route("/chatContacts/:id").get(async (req, res) => {
     res.json(all.data);
   }
 }); */
-router.route("/getAllData").get(async (req, res) => {
-  const allData = await globalQueries.getAllData();
+router.route("/getAllData/:id").get(async (req, res) => {
+  const allData = await globalQueries.getAllData(parseInt(req.params.id));
   if (allData.status) {
     res.json({ status: true, data: allData.data });
   }
