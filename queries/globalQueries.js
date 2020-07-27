@@ -25,10 +25,8 @@ exports.globalQueries = class {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
       console.log(user);
       const contacts = await User.find().populate("favorites");
-      const groups = await Groups.find({ users: { $in: user } })
-        .populate("msg")
-        .populate("users");
-      console.log(groups);
+      const groups = await Groups.find().populate("msg").populate("users");
+      console.log("groups", groups);
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
