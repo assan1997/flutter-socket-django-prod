@@ -19,6 +19,18 @@ router.route("/addUser").post(async (req, res) => {
     res.json(s.data);
   }
 });
+
+router.route("/addGroup").post(async (req, res) => {
+  req.body.users = req.body.users.split(' ');
+  req.body.id_ent = parseInt(req.body.id_ent);
+  console.log("body addGroup", req.body);
+  const s = await globalQueries.addGroup(req.body);
+  console.log("s", s);
+  if (s.status) {
+    res.json(s.data);
+  }
+});
+
 /* router.route("/chats/:id").get(async (req, res) => {
   console.log("oui je reçois laroute", req.params.id);
   let chats = await globalQueries.getAll({ user_id: parseInt(req.params.id) });

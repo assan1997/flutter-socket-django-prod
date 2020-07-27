@@ -20,6 +20,27 @@ exports.globalQueries = class {
         });
     });
   }
+
+  static addUser(data) {
+    return new Promise(async (next) => {
+      const group = await new Groups({
+        id_ent:data.id_ent,
+        name: data.name,
+        avatar: data.avatar,
+        users: data.users,
+        msg:[],
+      })
+      group
+        .save()
+        .then((r) => {
+          next({ status: true, data: r });
+        })
+        .catch((err) => {
+          next({ status: false, err: err });
+        });
+    });
+  }
+  
   static getAllData(id) {
     return new Promise(async (next) => {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
