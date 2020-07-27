@@ -24,7 +24,7 @@ exports.globalQueries = class {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
       console.log(user);
       const contacts = await User.find().populate("favorites");
-      await Chat.findOne({ $or: [{ initiator: user }, { peer: user }] })
+      await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
         .populate("msg")
@@ -40,6 +40,7 @@ exports.globalQueries = class {
                 msg: el.msg,
               });
               if (index === r.length - 1) {
+                console.log("output", output);
                 next({
                   status: true,
                   data: {
