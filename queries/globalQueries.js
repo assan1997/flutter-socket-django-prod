@@ -21,7 +21,7 @@ exports.globalQueries = class {
   }
   static getAllData(id) {
     return new Promise(async (next) => {
-      const user = await User.findOne({ uid: data }).then((r) => r._id);
+      const user = await User.findOne({ uid: id }).then((r) => r._id);
       const contacts = await User.find().populate("favorites");
       await Chat.findOne({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
