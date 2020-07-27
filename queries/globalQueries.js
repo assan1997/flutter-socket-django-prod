@@ -21,7 +21,7 @@ exports.globalQueries = class {
     });
   }
 
-  static addUser(data) {
+  static addGroup(data) {
     return new Promise(async (next) => {
       const group = await new Groups({
         id_ent:data.id_ent,
@@ -40,7 +40,7 @@ exports.globalQueries = class {
         });
     });
   }
-  
+
   static getAllData(id) {
     return new Promise(async (next) => {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
