@@ -29,6 +29,7 @@ exports.globalQueries = class {
         .populate("initiator")
         .populate("msg")
         .then((r) => {
+          console.log(r);
           if (r !== null && r.length > 0) {
             const output = [];
             r.forEach((el, index) => {
