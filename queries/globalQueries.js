@@ -28,7 +28,7 @@ exports.globalQueries = class {
         id_ent: data.id_ent,
         name: data.name,
         avatar: data.avatar,
-        users: data.users,
+        users: data.users.filter((user) => user !== ""),
         msg: [],
       });
       group
