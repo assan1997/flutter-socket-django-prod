@@ -36,26 +36,47 @@ wss.on("connection", (ws, request) => {
         break;
       case "send_message":
         message.message.senderId = message.userId;
-        wss.clients.forEach((client) => {
-          console.log("id", client.id);
-          if (
-            client.id !== ws.id &&
-            (client.id === message.userId || client.id === message.contactId)
-          ) {
-            client.send(
-              JSON.stringify({
-                type: message.type,
-                data: {
-                  msg: message.message,
-                  id: ws.id,
-                  text: message.message.textContent,
-                  isPinned: false,
-                  userId: client.id,
-                },
-              })
-            );
-          }
-        });
+        if (message.gid !== undefined) {
+          wss.clients.forEach((client) => {
+            console.log("id", client.id);
+            if (client.id !== ws.id && message.groupUsers.includes(client.id)) {
+              client.send(
+                JSON.stringify({
+                  type: message.type,
+                  data: {
+                    msg: message.message,
+                    id: ws.id,
+                    text: message.message.textContent,
+                    isPinned: false,
+                    userId: client.id,
+                    gid: message.gid,
+                  },
+                })
+              );
+            }
+          });
+        } else {
+          wss.clients.forEach((client) => {
+            console.log("id", client.id);
+            if (
+              client.id !== ws.id &&
+              (client.id === message.userId || client.id === message.contactId)
+            ) {
+              client.send(
+                JSON.stringify({
+                  type: message.type,
+                  data: {
+                    msg: message.message,
+                    id: ws.id,
+                    text: message.message.textContent,
+                    isPinned: false,
+                    userId: client.id,
+                  },
+                })
+              );
+            }
+          });
+        }
         await globalQueries.sendMessage(message);
         break;
       default:

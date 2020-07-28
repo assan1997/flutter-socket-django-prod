@@ -24,13 +24,13 @@ exports.globalQueries = class {
   static addGroup(data) {
     return new Promise(async (next) => {
       const group = await new Groups({
-        gid:data.gid,
-        id_ent:data.id_ent,
+        gid: data.gid,
+        id_ent: data.id_ent,
         name: data.name,
         avatar: data.avatar,
         users: data.users,
-        msg:[],
-      })
+        msg: [],
+      });
       group
         .save()
         .then((r) => {
@@ -140,45 +140,66 @@ exports.globalQueries = class {
 
   static sendMessage(data) {
     return new Promise(async (next) => {
-      const initiator = await User.findOne({ uid: data.userId }).then((r) => r);
-      const peer = await User.findOne({ uid: data.contactId }).then((r) => r);
-      const newMessage = await new Messages({
-        textContent: data.message.textContent,
-        isSent: data.message.isSent,
-        isPinned: data.message.isPinned,
-        senderId: data.userId,
-        time: data.message.time,
-      });
-      newMessage.save().then(async (mes) => {
-        const chat = await Chat.findOne({
-          $or: [
-            { initiator: initiator._id, peer: peer._id },
-            { initiator: peer._id, peer: initiator._id },
-          ],
-        }).then((s) => s);
-        if (chat !== null) {
-          chat.msg.push(mes._id);
-          chat.save().then((s) =>
-            next({
-              status: true,
-              data: { initiator: initiator.uid, peer: peer.uid },
-            })
-          );
-        } else {
-          const chat = await new Chat({
-            initiator: initiator._id,
-            peer: peer._id,
-            isPinned: false,
-            msg: [mes._id],
+      if (data.gid !== undefined) {
+        let group = await Groups.findOne({ gid: data.gid });
+        if (group !== null) {
+          const newMessage = await new Messages({
+            textContent: data.message.textContent,
+            isSent: data.message.isSent,
+            isPinned: data.message.isPinned,
+            senderId: data.userId,
+            time: data.message.time,
           });
-          chat.save().then((s) =>
-            next({
-              status: true,
-              data: { initiator: initiator.uid, peer: peer.uid },
-            })
-          );
+          newMessage.save().then((message) => {
+            group.msg.push(message._id);
+            group.save().then((r) => {
+              next({ status: true });
+            });
+          });
         }
-      });
+      } else {
+        const initiator = await User.findOne({ uid: data.userId }).then(
+          (r) => r
+        );
+        const peer = await User.findOne({ uid: data.contactId }).then((r) => r);
+        const newMessage = await new Messages({
+          textContent: data.message.textContent,
+          isSent: data.message.isSent,
+          isPinned: data.message.isPinned,
+          senderId: data.userId,
+          time: data.message.time,
+        });
+        newMessage.save().then(async (mes) => {
+          const chat = await Chat.findOne({
+            $or: [
+              { initiator: initiator._id, peer: peer._id },
+              { initiator: peer._id, peer: initiator._id },
+            ],
+          }).then((s) => s);
+          if (chat !== null) {
+            chat.msg.push(mes._id);
+            chat.save().then((s) =>
+              next({
+                status: true,
+                data: { initiator: initiator.uid, peer: peer.uid },
+              })
+            );
+          } else {
+            const chat = await new Chat({
+              initiator: initiator._id,
+              peer: peer._id,
+              isPinned: false,
+              msg: [mes._id],
+            });
+            chat.save().then((s) =>
+              next({
+                status: true,
+                data: { initiator: initiator.uid, peer: peer.uid },
+              })
+            );
+          }
+        });
+      }
     });
   }
 };
