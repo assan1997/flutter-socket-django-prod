@@ -3,7 +3,7 @@ const Ent = require("../models/entreprise.model");
 const Messages = require("../models/messages.model");
 const User = require("../models/users.model");
 const Groups = require("../models/groups.model");
-const { find } = require("../models/chats.model");
+const { colorCode } = require("../colorGenerator");
 exports.globalQueries = class {
   static addUser(data) {
     return new Promise(async (next) => {
@@ -28,6 +28,7 @@ exports.globalQueries = class {
         id_ent: data.id_ent,
         name: data.name,
         avatar: data.avatar,
+        color: colorCode(),
         users: data.users.filter((user) => user !== ""),
         msg: [],
       });
@@ -41,20 +42,21 @@ exports.globalQueries = class {
         });
     });
   }
-
   static getAllData(id) {
     return new Promise(async (next) => {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
-      console.log(user);
+      //console.log(user);
       const contacts = await User.find().populate("favorites");
-      const groups = await Groups.find().populate("msg").populate("users");
-      console.log("groups", groups);
+      const groups = await Groups.find({ users: { $in: user } })
+        .populate("msg")
+        .populate("users");
+
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
         .populate("msg")
         .then((r) => {
-          console.log(r);
+          //console.log(r);
           if (r !== null && r.length > 0) {
             const output = [];
             r.forEach((el, index) => {
@@ -127,11 +129,11 @@ exports.globalQueries = class {
         );
         user.save().then((r) => next({ status: true, data: "success" }));
       } else {
-        console.log("oui je rentre ici");
-        console.log(user.favorites);
+        //console.log("oui je rentre ici");
+        //console.log(user.favorites);
         user.favorites.push(favorite);
         user.save().then((r) => {
-          console.log("r", r);
+          //console.log("r", r);
           next({ status: true, data: "success" });
         });
       }
