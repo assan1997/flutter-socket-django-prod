@@ -88,7 +88,6 @@ wss.on("connection", (ws, request) => {
                 type: message.type,
                 data: message.text,
                 active: message.active,
-                typeChat: message.typeChat,
               })
             );
           }
@@ -102,7 +101,6 @@ wss.on("connection", (ws, request) => {
               JSON.stringify({
                 type: message.type,
                 active: message.active,
-                typeChat: message.typeChat,
               })
             );
           }
