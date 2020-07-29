@@ -25,8 +25,8 @@ wss.on("connection", (ws, request) => {
   console.log("user connected");
   ws.on("message", async (m) => {
     const message = JSON.parse(m);
-    console.log("message,", message);
-    console.log("ws_id", ws.id);
+    //console.log("message,", message);
+    //console.log("ws_id", ws.id);
     switch (message.type) {
       case "new_connection":
         ws.id = message.uid;
@@ -38,7 +38,7 @@ wss.on("connection", (ws, request) => {
         message.message.senderId = message.userId;
         if (message.gid !== undefined) {
           wss.clients.forEach((client) => {
-            console.log("id", client.id);
+            //console.log("id", client.id);
             if (client.id !== ws.id && message.groupUsers.includes(client.id)) {
               client.send(
                 JSON.stringify({
@@ -57,7 +57,7 @@ wss.on("connection", (ws, request) => {
           });
         } else {
           wss.clients.forEach((client) => {
-            console.log("id", client.id);
+            //console.log("id", client.id);
             if (
               client.id !== ws.id &&
               (client.id === message.userId || client.id === message.contactId)
@@ -78,6 +78,31 @@ wss.on("connection", (ws, request) => {
           });
         }
         await globalQueries.sendMessage(message);
+        break;
+      case "send_isTyping":
+        wss.clients.forEach((client) => {
+          //console.log("id", client.id);
+          if (client.id !== ws.id && message.users.includes(client.id)) {
+            client.send(
+              JSON.stringify({
+                type: message.type,
+                data: message.text,
+              })
+            );
+          }
+        });
+        break;
+      case "send_stopTyping":
+        wss.clients.forEach((client) => {
+          //console.log("id", client.id);
+          if (client.id !== ws.id && message.users.includes(client.id)) {
+            client.send(
+              JSON.stringify({
+                type: message.type,
+              })
+            );
+          }
+        });
         break;
       default:
         console.log("nothing");
