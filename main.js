@@ -87,6 +87,7 @@ wss.on("connection", (ws, request) => {
               JSON.stringify({
                 type: message.type,
                 data: message.text,
+                active: message.active,
               })
             );
           }
@@ -99,6 +100,7 @@ wss.on("connection", (ws, request) => {
             client.send(
               JSON.stringify({
                 type: message.type,
+                active: message.active,
               })
             );
           }
