@@ -53,7 +53,19 @@ exports.globalQueries = class {
         .populate("msg")
         .populate({
           path: "users",
-          select: "uid id_ent displayName status photoURL ",
+          select: "id_ent",
+        })
+        .populate({
+          path: "users",
+          select: "displayName",
+        })
+        .populate({
+          path: "users",
+          select: "status",
+        })
+        .populate({
+          path: "users",
+          select: "photoURL",
         });
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
