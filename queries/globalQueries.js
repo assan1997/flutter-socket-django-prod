@@ -52,7 +52,9 @@ exports.globalQueries = class {
       const groups = await Groups.find({ users: { $in: user } })
         .populate("msg")
         .populate("users")
-        .select("uid id_ent displayName status photoURL");
+        .select(
+          "users.uid users.id_ent users.displayName users.status users.photoURL"
+        );
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")
