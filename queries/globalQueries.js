@@ -46,11 +46,13 @@ exports.globalQueries = class {
     return new Promise(async (next) => {
       const user = await User.findOne({ uid: id }).then((r) => r._id);
       //console.log(user);
-      const contacts = await User.find().populate("favorites");
+      const contacts = await User.find().select(
+        "uid id_ent email displayName about status photoURL"
+      );
       const groups = await Groups.find({ users: { $in: user } })
         .populate("msg")
-        .populate("users");
-
+        .populate("users")
+        .select("uid id_ent displayName status photoURL");
       await Chat.find({ $or: [{ initiator: user }, { peer: user }] })
         .populate("peer")
         .populate("initiator")

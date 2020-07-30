@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const GroupsSchema = new mongoose.Schema({
-  gid: {type: Number},
+  gid: { type: Number },
   id_ent: { type: Number },
   name: { type: String },
   avatar: { type: String },
+  color: { type: String },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
   msg: [{ type: mongoose.Schema.Types.ObjectId, ref: "messages" }],
 });
